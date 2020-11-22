@@ -8,5 +8,5 @@ public class CompTrie {
     /**
      * Head node of the compressed trie
      */
-    CompTrieNode head;
+    CompTrieNode rootNode;
 }
