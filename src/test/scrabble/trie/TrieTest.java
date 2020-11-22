@@ -43,6 +43,8 @@ public class TrieTest {
         testTrie.addWord("hel");
         testTrie.addWord("k");
         testTrie.addWord("");
+        testTrie.addWord("hippo");
+        testTrie.addWord("hidsadf");
 
         testTrie.traverseTrie();
 

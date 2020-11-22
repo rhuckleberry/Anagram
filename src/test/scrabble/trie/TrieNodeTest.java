@@ -3,7 +3,9 @@ package test.scrabble.trie;
 import main.scrabble.trie.TrieNode;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,22 +60,30 @@ public class TrieNodeTest {
 
     @Test
     public void addChild(){
+        //build trie
         TrieNode setNode = new TrieNode("");
-        assertEquals(new HashSet<>(), setNode.getChildren());
+        assertEquals(new HashMap<>(), setNode.getChildren());
 
+        //add child
         TrieNode childNode = new TrieNode("child");
         setNode.addChild(childNode);
-        assertEquals(Set.of(childNode), setNode.getChildren());
+        assertEquals(Map.of("child", childNode), setNode.getChildren());
     }
 
     @Test
     public void removeChild(){
+        //build trie
         TrieNode setNode = new TrieNode("");
-        assertEquals(new HashSet<>(), setNode.getChildren());
+        assertEquals(new HashMap<>(), setNode.getChildren());
 
+        //add child
         TrieNode childNode = new TrieNode("child");
         setNode.addChild(childNode);
-        assertEquals(Set.of(childNode), setNode.getChildren());
+        assertEquals(Map.of("child", childNode), setNode.getChildren());
+
+        //remove child
+        setNode.removeChild("child");
+        assertEquals(new HashMap<>(), setNode.getChildren());
     }
 
 }
