@@ -1,7 +1,6 @@
 package main.scrabble.trie;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -20,9 +19,9 @@ public class TrieNode {
     private boolean isValid;
 
     /**
-     * Children of the node
+     * Children of the node, represented as hashmap of data : TrieNode
      */
-    private Set<TrieNode> children;
+    private HashMap<String, TrieNode> children;
 
     /**
      * Constructor for the node
@@ -31,7 +30,7 @@ public class TrieNode {
     public TrieNode(String data){
         this.data = data;
         this.isValid = false;
-        this.children = new HashSet<>();
+        this.children = new HashMap<>();
     }
 
     /**
@@ -42,19 +41,37 @@ public class TrieNode {
     public TrieNode(String data, boolean isValid){
         this.data = data;
         this.isValid = isValid;
-        this.children = new HashSet<>();
+        this.children = new HashMap<>();
     }
 
     /**
      * Constructor for node
      * @param data - String representing this nodes data
      * @param isValid - boolean whether is valid word endpoint
-     * @param children - set of TrieNode children
+     * @param children - hashmap of TrieNode children
      */
-    public TrieNode(String data, boolean isValid, Set<TrieNode> children){
+    public TrieNode(String data, boolean isValid, HashMap<String, TrieNode> children){
         this.data = data;
         this.isValid = isValid;
         this.children = children;
+    }
+
+    /**
+     * Override equals method for TrieNode
+     * @param obj - object to compare
+     * @return true if objects are equal; false otherwise
+     */
+    @Override
+    public boolean equals(Object obj){
+        //incorrect type
+        if(!(obj instanceof TrieNode)){
+            return false;
+        }
+
+        //compare fields values
+        return this.getData().equals(((TrieNode) obj).getData()) &&
+            this.getIsValid().equals(((TrieNode) obj).getIsValid()) &&
+            this.getChildren().equals(((TrieNode) obj).getChildren());
     }
 
     /**
@@ -77,8 +94,22 @@ public class TrieNode {
      * Get node's children
      * @return children
      */
-    public Set<TrieNode> getChildren(){
+    public HashMap<String, TrieNode> getChildren(){
         return this.children;
+    }
+
+    /**
+     * Get child with String data from node's children
+     * @param childStr - string data we want child to represent
+     * @return child in node's children with given string data; throws exception otherwise
+     * @throws Exception - throws error if child not in children
+     */
+    public TrieNode getChild(String childStr) throws Exception {
+        if(this.getChildren().containsKey(childStr)) {
+            return this.getChildren().get(childStr);
+        } else{
+            throw new Exception("Child Not in Children");
+        }
     }
 
     /**
@@ -98,48 +129,101 @@ public class TrieNode {
     }
 
     /**
-     * Returns whether node's children contains given child
+     * Returns whether node's children contains given child node (matching parameters)
      * @param child - TrieNode child
-     * @return true if children contains child; false otherwise
+     * @return true if children contains child node (matching parameters); false otherwise
      */
     public boolean containsChild(TrieNode child){
-        return this.children.contains(child);
+        //ensure both has String and has matching corresponding node parameters
+        return this.children.containsKey(child.getData()) &&
+            this.children.get(child.getData()).equals(child);
     }
 
     /**
-     * Adds child to node's children set
+     * Returns whether node's children contains given string
+     * @param childStr - child string
+     * @return true if node's children contains valid string
+     */
+    public boolean containsChild(String childStr){
+        return this.children.containsKey(childStr) &&
+            this.children.get(childStr).getData().equals(childStr);
+    }
+
+    /**
+     * Adds child to node's children map
      * @param child - new TrieNode child
-     * @return if child added, returns True; returns false if child already in children
      */
-    public boolean addChild(TrieNode child){
-        return this.children.add(child);
+    public void addChild(TrieNode child){
+        this.children.put(child.getData(), child);
     }
 
     /**
-     * Adds set of children from node's children set
+     * Add string and corresponding node to node's children map
+     * @param childStr - string to add to children
+     */
+    public void addChild(String childStr){
+        this.children.put(childStr, new TrieNode("childStr"));
+    }
+
+    /**
+     * Adds set of TrieNode children to node's children map
      * @param children - set of TrieNode children to add
-     * @return true if children added; false otherwise
      */
-    public boolean addChildren(Set<TrieNode> children){
-        return this.children.addAll(children);
+    public void addTrieChildren(Set<TrieNode> children){
+        for(TrieNode child : children){
+            this.addChild(child);
+        }
     }
 
     /**
-     * Removes child from node's children set
-     * @param child - TrieNode child
-     * @return true if child removed; false otherwise
+     * Adds set of String children to node's children map
+     * @param children - set of String children to add
+     */
+    public void addStringChildren(Set<String> children){
+        for(String child : children){
+            this.addChild(child);
+        }
+    }
+
+    /**
+     * Removes child TrieNode from children if matching TrieNode in children
+     * @param child - TrieNode of child to remove
+     * @return true if removed; false if children no contain MATCHING child
      */
     public boolean removeChild(TrieNode child){
-        return this.children.remove(child);
+        if(this.containsChild(child)){
+            this.children.remove(child.getData());
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Removes set of children from node's children set
-     * @param children - set of TrieNode children to remove
-     * @return true if children removed; false otherwise
+     * Removes child String from children map
+     * @param childStr - string of child to remove
      */
-    public boolean removeChildren(Set<TrieNode> children){
-        return this.children.removeAll(children);
+    public void removeChild(String childStr){
+        this.children.remove(childStr);
+    }
+
+    /**
+     * Removes set of TrieNode children from node's children map
+     * @param children - set of TrieNode children to remove
+     */
+    public void removeTrieChildren(Set<TrieNode> children){
+        for(TrieNode child : children){
+            this.removeChild(child);
+        }
+    }
+
+    /**
+     * Removes set of String children from node's children map
+     * @param children - set of String children to remove
+     */
+    public void removeStringChildren(Set<String> children){
+        for(String child : children){
+            this.removeChild(child);
+        }
     }
 
 
