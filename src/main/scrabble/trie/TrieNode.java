@@ -1,7 +1,6 @@
 package main.scrabble.trie;
 
-import java.util.HashMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents a single node in the Trie
@@ -101,15 +100,19 @@ public class TrieNode {
     /**
      * Get child with String data from node's children
      * @param childStr - string data we want child to represent
-     * @return child in node's children with given string data; throws exception otherwise
-     * @throws Exception - throws error if child not in children
+     * @return child in node's children with given string data
      */
-    public TrieNode getChild(String childStr) throws Exception {
-        if(this.getChildren().containsKey(childStr)) {
-            return this.getChildren().get(childStr);
-        } else{
-            throw new Exception("Child Not in Children");
-        }
+    public TrieNode getChild(String childStr) {
+        return this.getChildren().get(childStr);
+    }
+
+    /**
+     * Get child with Character data from node's children
+     * @param childChar - character data we want child to represent
+     * @return child in node's children with given character data
+     */
+    public TrieNode getChild(Character childChar) {
+        return this.getChild(Character.toString(childChar));
     }
 
     /**
@@ -142,11 +145,20 @@ public class TrieNode {
     /**
      * Returns whether node's children contains given string
      * @param childStr - child string
-     * @return true if node's children contains valid string
+     * @return true if node's children contains valid string; false otherwise
      */
     public boolean containsChild(String childStr){
         return this.children.containsKey(childStr) &&
             this.children.get(childStr).getData().equals(childStr);
+    }
+
+    /**
+     * Returns whether node's children contains given character
+     * @param childChar - child character
+     * @return true if node's children contains character; false otherwise
+     */
+    public boolean containsChild(Character childChar){
+        return this.containsChild(Character.toString(childChar));
     }
 
     /**
@@ -223,6 +235,133 @@ public class TrieNode {
     public void removeStringChildren(Set<String> children){
         for(String child : children){
             this.removeChild(child);
+        }
+    }
+
+    /**
+     * Adds valid sequence to the end of this node in the trie
+     * @param validSeq - valid sequence to add to trie
+     */
+    public void addWord(String validSeq){
+        //Base Case: validSeq is empty
+        if (validSeq.isEmpty()){
+            //set this node's isValid to true
+            this.setIsValid(true);
+            return;
+        }
+
+        //ensure no prefix exists in trie starting at this node
+        Prefix seqPrefix = this.findPrefix(validSeq);
+        String prefix = seqPrefix.getPrefix();
+        TrieNode endpoint = seqPrefix.getEndpoint();
+
+        //no prefix starting at this node
+        if (prefix.isEmpty()){
+            //get next character to add
+            String nextChar = Character.toString(validSeq.charAt(0));
+            TrieNode newChild = new TrieNode(nextChar);
+
+            //build and add next child
+            this.addChild(newChild);
+            newChild.addWord(validSeq.substring(1));
+        }
+
+        //Has prefix starting at this node: run this on endpoint
+        endpoint.addWord(validSeq.replaceFirst(prefix, ""));
+    }
+
+
+    /**
+     * Finds prefixWord prefix in the trie (prefix may be all of prefixWord)
+     * @param prefixWord - word to find prefix of in the trie
+     * @return String of the prefix along with the last TrieNode in the prefix in the trie
+     */
+    public Prefix findPrefix(String prefixWord){
+        //Base Case: prefixWord empty
+        if (prefixWord.isEmpty()){
+            return new Prefix(prefixWord, this);
+        }
+
+        //Recursive Case: nextChar has child in this node
+        Character nextChar = prefixWord.charAt(0);
+        if (this.containsChild(nextChar)){
+            //recursively call prefix
+            Prefix recPrefix =  this.getChild(nextChar).findPrefix(
+                prefixWord.substring(1));
+            String recStrPrefix = recPrefix.getPrefix();
+            TrieNode recEndpoint = recPrefix.getEndpoint();
+
+            //return recursive prefix with character appended
+            return new Prefix(Character.toString(nextChar) + recStrPrefix,
+                recEndpoint);
+        }
+
+        //Base Case: nextChar has no child at this node
+        return new Prefix("", this);
+
+    }
+
+    /**
+     * Finds all string permutations (subset permutations too!) of charList that are in
+     * trie starting at this node
+     * @param charList - list of characters to permute
+     * @return strings in trie from permutations of charList starting at this node
+     */
+    protected Set<String> recPermuteContains(List<Character> charList){
+        //words contained in trie
+        Set<String> stringContains = new HashSet<>();
+
+        //Base Case:
+        if (this.getIsValid()){
+            //data will be appended in back-calls
+            stringContains.add("");
+        }
+
+        if (charList.size() == 0){
+            return stringContains;
+        }
+
+        //Recursive Case:
+
+        //set of chars already iterated on this recursion
+        Set<Character> usedChars = new HashSet<>();
+
+        for(int i=0; i<charList.size();i++){
+            Character recChar = charList.get(i);
+
+            //ensure we haven't recursed on this character
+            if(!usedChars.contains(recChar)){
+                //add this character to set of recursed characters
+                usedChars.add(recChar);
+
+                //ensure that this character is child of node
+                if(this.containsChild(recChar)){
+
+                    //get recursively called strings contained in trie
+                    List<Character> recList = new ArrayList<>(charList);
+                    recList.remove(i);
+
+                    Set<String> permContains = this.getChild(recChar)
+                        .recPermuteContains(recList);
+
+                    //correctly add strings from recursion to stringContains
+                    for(String containedStr : permContains){
+                        stringContains.add(Character.toString(recChar) + containedStr);
+                    }
+                }
+            }
+        }
+
+        return stringContains;
+    }
+
+    /**
+     * Traverses trie and prints out order (like DFS style)
+     */
+    public void traverseTrie(){
+        System.out.println(this.data);
+        for (Map.Entry<String, TrieNode> entry : this.getChildren().entrySet()){
+            entry.getValue().traverseTrie();
         }
     }
 
