@@ -1,6 +1,5 @@
 package main.scrabble.compressedtrie;
 
-import main.scrabble.trie.TrieNode;
 
 /**
  * Represents the compressed trie

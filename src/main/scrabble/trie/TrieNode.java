@@ -353,8 +353,7 @@ public class TrieNode {
             TrieNode recEndpoint = recPrefix.getEndpoint();
 
             //return recursive prefix with character appended
-            return new Prefix(Character.toString(nextChar) + recStrPrefix,
-                recEndpoint);
+            return new Prefix(nextChar + recStrPrefix, recEndpoint);
         }
 
         //Base Case: nextChar has no child at this node
@@ -407,7 +406,7 @@ public class TrieNode {
 
                     //correctly add strings from recursion to stringContains
                     for(String containedStr : permContains){
-                        stringContains.add(Character.toString(recChar) + containedStr);
+                        stringContains.add(recChar + containedStr);
                     }
                 }
             }
