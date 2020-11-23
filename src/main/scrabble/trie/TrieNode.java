@@ -239,6 +239,67 @@ public class TrieNode {
     }
 
     /**
+     * FixUp all children of this node
+     * @return true is any children removed; false otherwise
+     */
+    public boolean fixUp(){
+        boolean didRemove = false;
+        for (Map.Entry<String, TrieNode> entry : this.getChildren().entrySet()){
+            TrieNode child = entry.getValue();
+            didRemove = didRemove || this.fixUp(child); //OR to preserve TRUE
+        }
+        return didRemove;
+    }
+
+    /**
+     * FixUp word path in trie
+     * @param fixWord - word path to fix up
+     * @return true if node removed; false otherwise
+     */
+    public boolean fixUp(String fixWord){
+        //Base Case: fixWord empty
+        if (fixWord.isEmpty()){
+            return false;
+        }
+
+        String nextChar = Character.toString(fixWord.charAt(0));
+        TrieNode child;
+        if(this.containsChild(nextChar)){
+            //fixWord so far still in trie
+            child = this.getChild(nextChar);
+        } else{
+            //fixWord not in trie
+            return false;
+        }
+
+        //recursively fixup rest of string
+        boolean didRemove = child.fixUp(fixWord.substring(1));
+        boolean didFixUp = this.fixUp(child);
+        return didRemove || didFixUp;
+    }
+
+    /**
+     * FixUp child of this node
+     * @param child - TrieNode that is child of this node
+     * @return true if child removed; false otherwise
+     */
+    public boolean fixUp(TrieNode child){
+        //ensure this node is a child
+        if(!this.containsChild(child)){
+            return false;
+        }
+
+        //remove child if it has no children & is not valid
+        if (child.getChildren().isEmpty() && !child.getIsValid()){
+            this.removeChild(child);
+            return true;
+        }
+
+        //child not removed
+        return false;
+    }
+
+    /**
      * Adds valid sequence to the end of this node in the trie
      * @param validSeq - valid sequence to add to trie
      */
@@ -358,11 +419,34 @@ public class TrieNode {
     /**
      * Traverses trie and prints out order (like DFS style)
      */
-    public void traverseTrie(){
+    public void traverseTrieNodes(){
         System.out.println(this.data);
         for (Map.Entry<String, TrieNode> entry : this.getChildren().entrySet()){
-            entry.getValue().traverseTrie();
+            entry.getValue().traverseTrieNodes();
         }
+    }
+
+    /**
+     * Traverses trie and prints out words contained in the trie
+     * @return Set of valid strings in trie
+     */
+    public Set<String> traverseTrieWords(){
+        Set<String> validStrings = new HashSet<>();
+
+        if (this.getIsValid()){
+            validStrings.add(this.getData());
+        }
+
+        for (Map.Entry<String, TrieNode> entry : this.getChildren().entrySet()){
+            Set<String> recValid = entry.getValue().traverseTrieWords();
+
+            //add recursive valid strings to validStrings
+            for (String validStr : recValid){
+                validStrings.add(this.getData() + validStr);
+            }
+        }
+
+        return validStrings;
     }
 
 

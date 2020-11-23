@@ -3,8 +3,8 @@ package test.scrabble.trie;
 import main.scrabble.trie.Trie;
 import main.scrabble.trie.TrieNode;
 import org.junit.Test;
-import org.junit.jupiter.api.Order;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -46,11 +46,67 @@ public class TrieTest {
         testTrie.addWord("hippo");
         testTrie.addWord("hidsadf");
 
-        testTrie.traverseTrie();
+        testTrie.traverseTrieNodes();
 
         assertEquals(Set.of("hel", "hello", "k", ""), testTrie.permuteContains(
             List.of('h', 'e', 'l', 'l', 'o', 'k')));
     }
+
+    @Test
+    public void removeWord(){
+        //build trie
+        Trie testTrie = new Trie();
+        testTrie.addWord("hello");
+        testTrie.addWord("hel");
+        testTrie.addWord("k");
+        testTrie.addWord("");
+        testTrie.addWord("hippo");
+
+        assertEquals(Set.of("hello", "hel", "k", "", "hippo"),
+            new HashSet<>(testTrie.traverseTrieWords()));
+
+        //remove word
+        testTrie.removeWord("hippo");
+        testTrie.removeWord("hello");
+        testTrie.removeWord("");
+        testTrie.removeWord("asdf");
+
+        testTrie.traverseTrieNodes();
+
+        assertEquals(Set.of("hel", "k"),
+            new HashSet<>(testTrie.traverseTrieWords()));
+    }
+
+    @Test
+    public void traverse(){
+        Trie testTrie = new Trie();
+        testTrie.addWord("hello");
+        testTrie.addWord("hel");
+        testTrie.addWord("k");
+        testTrie.addWord("");
+        testTrie.addWord("hippo");
+        testTrie.addWord("hidsadf");
+
+        assertEquals(Set.of("hello", "hel", "k", "", "hippo", "hidsadf"),
+            new HashSet<>(testTrie.traverseTrieWords()));
+    }
+
+    @Test
+    public void contains(){
+        Trie testTrie = new Trie();
+        testTrie.addWord("hello");
+        testTrie.addWord("hel");
+        testTrie.addWord("k");
+        testTrie.addWord("");
+        testTrie.addWord("hippo");
+        testTrie.addWord("hidsadf");
+
+        assertTrue(testTrie.contains("hidsadf"));
+        assertTrue(testTrie.contains(""));
+        assertFalse(testTrie.contains("hell"));
+    }
+
+
 
 
 

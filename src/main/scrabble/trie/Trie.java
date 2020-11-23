@@ -77,8 +77,23 @@ public class Trie {
      * Removes the given invalid word from trie
      * @param invalidWord - word to remove from trie
      */
-    public void removeString(String invalidWord){
-        //implement this
+    public void removeWord(String invalidWord){
+        //find prefix of word already in trie
+        Prefix triePrefix = this.findPrefix(invalidWord);
+        String prefix = triePrefix.getPrefix();
+        TrieNode endpoint = triePrefix.getEndpoint();
+
+        //Case: invalidWord in trie
+        if (prefix.equals(invalidWord)){
+            //make endpoint valid word node
+            endpoint.setIsValid(false);
+
+            //fix-up tree
+            this.rootNode.fixUp(invalidWord);
+        }
+
+        //Case: invalidWord not in trie - do nothing!
+
     }
 
     /**
@@ -93,8 +108,16 @@ public class Trie {
     /**
      * Traverses trie and prints out order (like DFS style)
      */
-    public void traverseTrie(){
-        this.rootNode.traverseTrie();
+    public void traverseTrieNodes(){
+        this.rootNode.traverseTrieNodes();
+    }
+
+    /**
+     * Traverses trie and prints out words contained in the trie
+     * @return Set of valid strings in trie
+     */
+    public Set<String> traverseTrieWords(){
+        return this.rootNode.traverseTrieWords();
     }
 
     /**
