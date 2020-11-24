@@ -16,6 +16,7 @@ public class CompTrieNodeTest {
         rootNode.addWord("koala");
         rootNode.addWord("hippopotamus");
         rootNode.addWord("hinder");
+        rootNode.addWord("hippo");
 
         for (CompTrieNode child : rootNode.getChildren()){
             System.out.println(child.getData());
