@@ -9,7 +9,7 @@ public class CompTrie {
     /**
      * Head node of the compressed trie
      */
-    CompTrieNode rootNode;
+    private CompTrieNode rootNode;
 
     /**
      * Empty constructor for comptrie
@@ -32,5 +32,39 @@ public class CompTrie {
      */
     public CompTrieNode getRootNode(){
         return this.rootNode;
+    }
+
+    /**
+     * Add word to comptrie
+     * @param word - string word to add to trie
+     */
+    public void addWord(String word){
+        //if already in trie, return
+        if (this.contains(word)){
+            return;
+        }
+
+        //add word to trie
+        this.getRootNode().addWord(word);
+    }
+
+    /**
+     * Checks if word in comptrie
+     * @param word - string word to check
+     * @return true if word in comptrie; false otherwise
+     */
+    public boolean contains(String word){
+        //implement this
+        return this.getRootNode().contains(word);
+    }
+
+    /**
+     * Validates whether this is a compressed trie or not
+     * @return true if is compressed trie; false otherwise
+     */
+    public boolean validateTrie(){
+        //implement this
+        //assert no child isPrefix of any other child in node
+        return false;
     }
 }

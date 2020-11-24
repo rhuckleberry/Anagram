@@ -14,7 +14,7 @@ public class Trie {
     /**
      * Head node of the trie
      */
-    TrieNode rootNode;
+    private TrieNode rootNode;
 
     /**
      * Empty constructor for trie
