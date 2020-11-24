@@ -197,7 +197,7 @@ public class CompTrieNode {
                 return new CompPrefix(subPrefix, child);
             }
         }
-        return null;
+        return new CompPrefix("", null);
     }
 
     /**
