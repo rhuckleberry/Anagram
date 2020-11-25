@@ -1,7 +1,7 @@
-package test.scrabble.compressedtrie;
+package test.compressedtrie;
 
-import main.scrabble.compressedtrie.CompTrie;
-import main.scrabble.compressedtrie.CompTrieNode;
+import main.compressedtrie.CompTrie;
+import main.compressedtrie.CompTrieNode;
 import org.junit.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;

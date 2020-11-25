@@ -1,6 +1,4 @@
-package main.scrabble.compressedtrie;
-
-import main.scrabble.trie.TrieNode;
+package main.compressedtrie;
 
 import java.util.HashSet;
 import java.util.Set;

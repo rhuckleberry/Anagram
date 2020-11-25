@@ -1,7 +1,7 @@
-package test.scrabble.trie;
+package test.trie;
 
-import main.scrabble.trie.Trie;
-import main.scrabble.trie.TrieNode;
+import main.trie.Trie;
+import main.trie.TrieNode;
 import org.junit.Test;
 
 import java.util.HashSet;

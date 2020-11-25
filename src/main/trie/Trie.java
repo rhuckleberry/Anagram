@@ -1,4 +1,4 @@
-package main.scrabble.trie;
+package main.trie;
 
 //To do:
 //Constraint: Children can't have multiple nodes with overlapping prefix

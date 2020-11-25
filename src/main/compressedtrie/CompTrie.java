@@ -1,6 +1,4 @@
-package main.scrabble.compressedtrie;
-
-import java.util.Set;
+package main.compressedtrie;
 
 /**
  * Represents the compressed trie

@@ -1,4 +1,4 @@
-package main.scrabble.compressedtrie;
+package main.compressedtrie;
 
 /**
  * Wrapper class containing a string and node

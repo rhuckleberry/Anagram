@@ -1,4 +1,4 @@
-package main.scrabble.trie;
+package main.trie;
 
 import java.util.*;
 

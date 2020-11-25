@@ -1,6 +1,4 @@
-package main.scrabble.trie;
-
-import main.scrabble.trie.TrieNode;
+package main.trie;
 
 /**
  * Represents a prefix in the Trie, encapsulating the prefix String and the TrieNode in
