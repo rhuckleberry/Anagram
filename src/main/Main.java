@@ -4,6 +4,9 @@ import main.compressedtrie.CompTrie;
 import main.langbuilder.CompTrieBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Builds Trie and performs overall operations
@@ -13,10 +16,12 @@ public class Main {
     public static void main(String[] args) throws IOException {
         //wordlist path
         String userDir = System.getProperty("user.dir");
-        String wordListPath = userDir + "/src/wordlists/wordlist.txt";
+        String wordListPath = userDir + "/src/wordlists/WordListMIT.txt";
 
         //build trie
         CompTrie builtTrie = CompTrieBuilder.buildCompTrie(wordListPath);
+
+        //save trie?
 
         System.out.println(builtTrie.permuteContains("hippo"));
     }
@@ -24,7 +29,7 @@ public class Main {
     public void run() {
         //wordlist path
         String userDir = System.getProperty("user.dir");
-        String wordListPath = userDir + "/src/main/wordlists/wordlist.txt";
+        String wordListPath = userDir + "/src/main/wordlists/infochimps.txt";
 
         //build trie
         CompTrie builtTrie;
@@ -35,6 +40,9 @@ public class Main {
             return;
         }
 
-        System.out.println(builtTrie.permuteContains("hippo"));
+        String permuteString = "doxology";
+        Set<String> permuteContains = builtTrie.permuteContains(permuteString);
+
+        System.out.println(permuteContains);
     }
 }
