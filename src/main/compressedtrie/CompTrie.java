@@ -1,5 +1,7 @@
 package main.compressedtrie;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,6 +46,33 @@ public class CompTrie {
      */
     public boolean contains(String word){
         return this.getRootNode().contains(word);
+    }
+
+    /**
+     * Given a list of characters, returns all substring permutations of the list that are
+     * contained in the trie
+     * @param charList - list of characters
+     * @return set of substring permutations contained in the trie
+     */
+    public Set<String> permuteContains(List<Character> charList){
+        return this.rootNode.permuteContains(charList);
+    }
+
+    /**
+     * Given a word of characters, returns all substring permutations of the list that are
+     * contained in the trie
+     * @param word - string of characters
+     * @return set of substring permutations contained in the trie
+     */
+    public Set<String> permuteContains(String word){
+        //build charList
+        List<Character> charList = new ArrayList<>();
+        for (int i=0; i<word.length();i++){
+            charList.add(word.charAt(i));
+        }
+
+        //run recursive algorithm
+        return this.rootNode.permuteContains(charList);
     }
 
     /**

@@ -2,9 +2,7 @@ package main.compressedtrie;
 
 import main.trie.TrieNode;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents a single node in the Compressed Trie
@@ -135,6 +133,50 @@ public class CompTrieNode {
 
         //word not in trie
         return false;
+    }
+
+    /**
+     * Finds all string permutations (subset permutations too!) of charList that are in
+     * trie starting at this node
+     * @param charList - list of characters to permute
+     * @return strings in trie from permutations of charList starting at this node
+     */
+    protected Set<String> permuteContains(List<Character> charList){
+        //words contained in trie
+        Set<String> stringContains = new HashSet<>();
+
+        //Add empty string to stringContains if this node is valid
+        if (this.getIsValid()){
+            //data will be appended in back-calls
+            stringContains.add(this.getData());
+        }
+
+        //Base Case: no children - happens naturally in recursive case
+
+        //Recursive Case:
+        for (CompTrieNode child : this.getChildren()){
+            //if child is a subset permutation of charlist
+            String prefixSubset = child.getPermutationSubset(charList);
+            if (prefixSubset.equals(child.getData())){
+                //build new charList for child iteration
+                List<Character> newCharList = new ArrayList<>(charList);
+                for (int i=0; i<prefixSubset.length(); i++){
+                    //remove all chars in prefixSubset from charList
+                    Character removeChar = prefixSubset.charAt(i);
+                    newCharList.remove(removeChar);
+                }
+
+                //run recursively on child
+                Set<String> permContains = child.permuteContains(newCharList);
+
+                //add child string from recursion to stringContains with new prefix
+                for(String containedStr : permContains){
+                    stringContains.add(this.getData() + containedStr);
+                }
+            }
+        }
+
+        return stringContains;
     }
 
     /**
@@ -334,6 +376,50 @@ public class CompTrieNode {
             }
         }
         return null;
+    }
+
+    /**
+     * Gets prefix permutation subset
+     * @param charList - list of characters input
+     * @return String of prefix permutation subset
+     */
+    private String getPermutationSubset(List<Character> charList){
+        String data = this.getData();
+        Map<String, Integer> charMap = new HashMap<>();
+
+        //build charList as map of character to frequency in charList
+        for (Character charIndx : charList){
+            String charStr = Character.toString(charIndx);
+            if (charMap.containsKey(charStr)){
+                charMap.put(charStr, charMap.get(charStr) + 1);
+            } else {
+                charMap.put(charStr, 1);
+            }
+        }
+
+        //build prefix subset
+        String prefixSubset = "";
+        for (int i=0; i<data.length(); i++){
+            String charStr = Character.toString(data.charAt(i));
+            //if element in permuation, add to prefixSubset and update map
+            if (charMap.containsKey(charStr)){
+                prefixSubset += charStr;
+
+                //update map
+                if (charMap.get(charStr) == 1){
+                    charMap.remove(charStr);
+                } else {
+                    charMap.put(charStr, charMap.get(charStr) - 1);
+                }
+
+            } else {
+                //break at first character not in prefix
+                break;
+            }
+        }
+
+        return prefixSubset;
+
     }
 
 

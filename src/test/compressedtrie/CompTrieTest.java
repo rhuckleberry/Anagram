@@ -4,12 +4,194 @@ import main.compressedtrie.CompTrie;
 import main.compressedtrie.CompTrieNode;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class CompTrieTest {
+
+    //Test permuteContains
+
+    /**
+     * Test that returns empty string if marked valid
+     */
+    @Test
+    public void permuteContainsEmpty(){
+        CompTrie testTrie = new CompTrie();
+        testTrie.addWord("");
+
+        assert testTrie.isValidTrie();
+
+        assertEquals(Set.of(""), testTrie.permuteContains(
+            List.of()));
+
+        //character and string input give same results
+        assertEquals(testTrie.permuteContains( List.of()),
+            testTrie.permuteContains(""));
+    }
+
+    /**
+     * Test that returns single word in trie
+     */
+    @Test
+    public void permuteContainsOneWord(){
+        CompTrie testTrie = new CompTrie();
+        testTrie.addWord("hippo");
+
+        assert testTrie.isValidTrie();
+
+        assertEquals(Set.of("hippo"), testTrie.permuteContains(
+            List.of('h', 'i', 'p', 'p', 'o')));
+
+        //character and string input give same results
+        assertEquals(testTrie.permuteContains( List.of('h', 'i', 'p', 'p', 'o')),
+            testTrie.permuteContains("hippo"));
+    }
+
+
+
+    /**
+     * Test that returns two words in trie
+     */
+    @Test
+    public void permuteContainsTwoWord(){
+        CompTrie testTrie = new CompTrie();
+        testTrie.addWord("hippo");
+        testTrie.addWord("water");
+
+        assert testTrie.isValidTrie();
+
+        assertEquals(Set.of("hippo", "water"), testTrie.permuteContains(
+            List.of('h', 'i', 'p', 'p', 'o', 'w', 'a', 't', 'e', 'r')));
+
+        //character and string input give same results
+        assertEquals(testTrie.permuteContains(
+            List.of('h', 'i', 'p', 'p', 'o', 'w', 'a', 't', 'e', 'r')),
+            testTrie.permuteContains("hippowater"));
+    }
+
+    /**
+     * Test that returns subword and word in trie
+     */
+    @Test
+    public void permuteContainsSubWord(){
+        CompTrie testTrie = new CompTrie();
+        testTrie.addWord("hippo");
+        testTrie.addWord("hip");
+
+        assert testTrie.isValidTrie();
+
+        assertEquals(Set.of("hippo", "hip"), testTrie.permuteContains(
+            List.of('h', 'i', 'p', 'p', 'o')));
+
+        //character and string input give same results
+        assertEquals(testTrie.permuteContains( List.of('h', 'i', 'p', 'p', 'o')),
+            testTrie.permuteContains("hippo"));
+    }
+
+    /**
+     * Test that returns subword and word in trie
+     */
+    @Test
+    public void permuteContainsCoverWord(){
+        CompTrie testTrie = new CompTrie();
+        testTrie.addWord("apple");
+        testTrie.addWord("apple pie");
+
+        assert testTrie.isValidTrie();
+
+        assertEquals(Set.of("apple", "apple pie"), testTrie.permuteContains(
+            List.of('a', 'p', 'p', 'l', 'e', ' ', 'p', 'i', 'e')));
+
+        //character and string input give same results
+        assertEquals(
+            testTrie.permuteContains(List.of('a','p', 'p', 'l', 'e', ' ', 'p', 'i', 'e')),
+            testTrie.permuteContains("apple pie"));
+    }
+
+    /**
+     * Test that doesn't return word with duplicate letters, when only one single
+     * character provided
+     */
+    @Test
+    public void permuteContainsDuplicateCharacter(){
+        CompTrie testTrie = new CompTrie();
+        testTrie.addWord("apple");
+
+        assert testTrie.isValidTrie();
+
+        assertEquals(Set.of(), testTrie.permuteContains(
+            List.of('a', 'p', 'l', 'e')));
+
+        //character and string input give same results
+        assertEquals(testTrie.permuteContains(List.of('a', 'p', 'l', 'e')),
+            testTrie.permuteContains("aple"));
+    }
+
+    /**
+     * Test that doesn't return word when only given character prefix of word
+     */
+    @Test
+    public void permuteContainsPrefixCharacter(){
+        CompTrie testTrie = new CompTrie();
+        testTrie.addWord("dystopia");
+
+        assert testTrie.isValidTrie();
+
+        assertEquals(Set.of(), testTrie.permuteContains(
+            List.of('d', 'y', 's', 't', 'o', 'p', 'i')));
+
+        //character and string input give same results
+        assertEquals(testTrie.permuteContains(List.of('d', 'y', 's', 't', 'o', 'p', 'i')),
+            testTrie.permuteContains("dystopi"));
+    }
+
+    /**
+     * Test that returns all permutations even when words are on disjoint subtrees
+     */
+    @Test
+    public void permuteContainsDisjointSubtrees(){
+        CompTrie testTrie = new CompTrie();
+        testTrie.addWord("abcde");
+        testTrie.addWord("deca");
+
+        assert testTrie.isValidTrie();
+
+        assertEquals(Set.of("abcde", "deca"), testTrie.permuteContains(
+            List.of('a', 'b', 'c', 'd', 'e')));
+
+        //character and string input give same results
+        assertEquals(testTrie.permuteContains(List.of('a', 'b', 'c', 'd', 'e')),
+            testTrie.permuteContains("abcde"));
+    }
+
+    /**
+     * Test that returns all permutations even when words are on different subtrees
+     */
+    @Test
+    public void permuteContainsDifferentSubtrees(){
+        CompTrie testTrie = new CompTrie();
+        testTrie.addWord("do");
+        testTrie.addWord("donut");
+        testTrie.addWord("dog");
+        testTrie.addWord("donation");
+
+        assert testTrie.isValidTrie();
+
+        assertEquals(Set.of("do", "donut", "dog", "donation"), testTrie.permuteContains(
+            List.of('d', 'o', 'g', 'n', 'u', 't', 'a', 't', 'i', 'o', 'n')));
+
+        //character and string input give same results
+        assertEquals(testTrie.permuteContains(List.of('d', 'o', 'g', 'n', 'u', 't', 'a',
+            't', 'i', 'o', 'n')), testTrie.permuteContains("dognutation"));
+    }
+
+
+
+
+
 
     //Tests addWord
 
@@ -42,8 +224,6 @@ public class CompTrieTest {
     public void addWordEmpty(){
         CompTrie testTrie = new CompTrie();
         testTrie.addWord("");
-
-        System.out.println(testTrie.getRootNode().getChildren());
 
         //ensure has correct words
         assertEquals(Set.of(""), testTrie.computeTrieWords());
