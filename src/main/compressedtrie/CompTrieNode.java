@@ -77,8 +77,6 @@ public class CompTrieNode {
 
         //add to children if no other children is a prefix of this node
         if (childNode == null) {
-            Set<CompTrieNode> newChildren = this.getChildren();
-
             //form new child, set isValid to true
             CompTrieNode addedWordChild = new CompTrieNode(word);
             addedWordChild.setIsValid(true);
@@ -87,20 +85,17 @@ public class CompTrieNode {
             this.addChild(addedWordChild);
 
         } else {
+            //split child node
+            CompTrieNode newChild = this.splitChild(childNode, sharedPrefix);
 
-            //word is a prefix of child: split child and mark isValid true
             if (word.equals(sharedPrefix)){
-                //split child node
-                CompTrieNode newChild = this.splitChild(childNode, sharedPrefix);
+                //word is a prefix of child: split child and mark isValid true
 
                 //mark node representing sharedPrefix inValid to true
                 newChild.setIsValid(true);
 
             } else {
                 //child shares part of word as a prefix: split child and add new word node
-
-                //split child node
-                CompTrieNode newChild = this.splitChild(childNode, sharedPrefix);
 
                 //build new word node
                 CompTrieNode newWord = new CompTrieNode(
