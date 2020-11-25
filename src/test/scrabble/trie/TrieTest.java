@@ -73,7 +73,7 @@ public class TrieTest {
 
         testTrie.traverseTrieNodes();
 
-        assertEquals(Set.of("hel", "k"),
+        assertEquals(Set.of("hello", "k"),
             new HashSet<>(testTrie.traverseTrieWords()));
     }
 
