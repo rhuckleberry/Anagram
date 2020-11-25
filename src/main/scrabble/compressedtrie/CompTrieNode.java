@@ -38,7 +38,7 @@ public class CompTrieNode {
         return this.data;
     }
 
-    public void setData(String data){
+    private void setData(String data){
         this.data = data;
     }
 
@@ -46,7 +46,7 @@ public class CompTrieNode {
         return this.isValid;
     }
 
-    public void setIsValid(boolean isValid){
+    protected void setIsValid(boolean isValid){
         this.isValid = isValid;
     }
 
@@ -55,26 +55,11 @@ public class CompTrieNode {
     }
 
     /**
-     * Add child to this node's children set
-     * @param child - child to add
-     */
-    public void addChild(CompTrieNode child){
-        //ensure Invariant: no two children are prefixes of each other
-        CompPrefix prefixChild = this.getSubPrefixChild(child.getData());
-        assert prefixChild.getNode() == null;
-
-        //add child to children set
-        Set<CompTrieNode> newChildren = this.getChildren();
-        newChildren.add(child);
-        this.children = newChildren;
-    }
-
-    /**
      * Adds word to trie starting at this node
      * @param word - word to add
      */
-    public void addWord(String word){
-        //if word is exactly this node, set node's isValid to true
+    protected void addWord(String word){
+        //if word is exactly this node or word already in trie, set node's isValid to true
         if (word.isEmpty()){
             this.setIsValid(true);
             return;
@@ -132,6 +117,83 @@ public class CompTrieNode {
 
     }
 
+
+    /**
+     * Checks if word in comptrie
+     * @param word - string word to check
+     * @return true if word in comptrie; false otherwise
+     */
+    protected boolean contains(String word){
+        //Base Case: word is empty
+        if (word.isEmpty()){
+            return this.getIsValid();
+        }
+
+        //check if there exists prefix child
+        CompTrieNode prefixChild = this.getPrefixChild(word);
+        if (prefixChild != null){
+            String childWord = word.replaceFirst(prefixChild.getData(), "");
+            return prefixChild.contains(childWord);
+        }
+
+        //word not in trie
+        return false;
+    }
+
+    /**
+     * Validates whether this is a compressed trie or not
+     * ~Assume this node is NOT the root node
+     * @return true if all invariants followed; false otherwise
+     */
+    protected boolean isValidTrie(){
+        Set<CompTrieNode> children = this.getChildren();
+
+        //assert all end nodes have isValid true (besides root node)
+        if (children.isEmpty()){
+            return this.isValid;
+        }
+
+        //assert no child isPrefix of any other child in node
+        for (CompTrieNode child : this.children){
+            //get sub prefix child for each node
+            String data = child.getData();
+            CompPrefix prefixChild = this.getSubPrefixChild(data);
+
+            //if sub prefix child exists in children, return false (violates invariant!)
+            if (prefixChild.getNode() != null){
+                return false;
+            }
+        }
+
+        //iterate validation of children nodes
+        for (CompTrieNode child : this.children){
+            //return false if one of the children is violates invariant
+            if (!child.isValidTrie()){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Add child to this node's children set
+     * @param child - child to add
+     */
+    private void addChild(CompTrieNode child){
+        //ensure Invariant: no two children are prefixes of each other
+        CompPrefix prefixChild = this.getSubPrefixChild(child.getData());
+        assert prefixChild.getNode() == null;
+
+        //ensure Invariant: all end nodes are valid! - done in functions calling this
+        //assert child.isValidTrie();
+
+        //add child to children set
+        Set<CompTrieNode> newChildren = this.getChildren();
+        newChildren.add(child);
+        this.children = newChildren;
+    }
+
     /**
      * Given a CompTrieNode that is a child of this node, splits it at the splitString
      * @param childNode - child node to split
@@ -139,7 +201,7 @@ public class CompTrieNode {
      *                    splitString becomes new child node of splitString node)
      * @return new child after the split
      */
-    public CompTrieNode splitChild(CompTrieNode childNode, String splitString){
+    private CompTrieNode splitChild(CompTrieNode childNode, String splitString){
         //build new middle node
         CompTrieNode middleNode = new CompTrieNode(splitString);
 
@@ -162,34 +224,12 @@ public class CompTrieNode {
     }
 
     /**
-     * Checks if word in comptrie
-     * @param word - string word to check
-     * @return true if word in comptrie; false otherwise
-     */
-    public boolean contains(String word){
-        //Base Case: word is empty
-        if (word.isEmpty()){
-            return this.getIsValid();
-        }
-
-        //check if there exists prefix child
-        if (this.isPrefix(word)){
-            CompTrieNode prefixChild = this.getPrefixChild(word);
-            String childWord = word.replaceFirst(prefixChild.getData(), "");
-            return prefixChild.contains(childWord);
-        }
-
-        //word not in trie
-        return false;
-    }
-
-    /**
      * Returns node's child that shares a prefix with given word and the shared prefix;
      * or null if no children share a prefix
      * @param word - string word to find child with sharing prefix
      * @return child that shares a prefix and shared prefix; otherwise returns null
      */
-    public CompPrefix getSubPrefixChild(String word){
+    private CompPrefix getSubPrefixChild(String word){
         for (CompTrieNode child : this.getChildren()){
             //if child has a shared prefix with word, return child
             String subPrefix = child.getSubPrefix(word);
@@ -221,26 +261,13 @@ public class CompTrieNode {
         return subPrefix.toString();
     }
 
-    /**
-     * Returns whether one of this node's children are a prefix for word
-     * @param word - string word to check
-     * @return true if this node has a child prefix for word; false otherwise
-     */
-    public boolean isPrefix(String word){
-        for (CompTrieNode child : this.getChildren()){
-            if (word.startsWith(child.getData())){
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Get child that is prefix of input word
      * @param word - word to get prefix child of
      * @return prefiux child; or null if none exist
      */
-    public CompTrieNode getPrefixChild(String word){
+    private CompTrieNode getPrefixChild(String word){
         for (CompTrieNode child : this.getChildren()){
             if (word.startsWith(child.getData())){
                 return child;
