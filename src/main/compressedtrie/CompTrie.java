@@ -1,5 +1,7 @@
 package main.compressedtrie;
 
+import java.util.Set;
+
 /**
  * Represents the compressed trie
  */
@@ -16,15 +18,6 @@ public class CompTrie {
     public CompTrie(){
         this.rootNode = new CompTrieNode("");
     }
-
-//    /**
-//     * Contructor for comptrie taking TrieNode
-//     * @param rootNode - TrieNode for comptrie rootNode
-//     */
-//    public CompTrie(CompTrieNode rootNode){
-//        this.rootNode = rootNode;
-//        assert this.isValidTrie();
-//    }
 
     /**
      * Get comptrie root node
@@ -62,19 +55,30 @@ public class CompTrie {
         CompTrieNode rootNode = this.rootNode;
         boolean isValid;
 
-        //if rootnode isValid is true, simply run isValidTrie
-        if (rootNode.getIsValid()){
-            isValid = rootNode.isValidTrie();
-        } else {
-            //if rootnode isValid is false:
-            // 1. mark rootnode isValid to true
-            // 2. run isValidTrie
-            // 3. mark rootnode isValid back to false
-            rootNode.setIsValid(true);
-            isValid = rootNode.isValidTrie();
-            rootNode.setIsValid(false);
-        }
+        //get initial rootnode parameters
+        boolean rootValid = rootNode.getIsValid();
+        String rootData = rootNode.getData();
+
+        //temporarily set rootnode parameters to not fail tests
+        rootNode.setIsValid(true);
+        rootNode.setData(" ");
+
+        //run trie validation
+        isValid = rootNode.isValidTrie();
+
+        //return rootnode to initial parameters
+        rootNode.setData(rootData);
+        rootNode.setIsValid(rootValid);
 
         return isValid;
     }
+
+    /**
+     * Traverses trie and prints out words contained in the trie
+     * @return Set of valid strings in trie
+     */
+    public Set<String> computeTrieWords(){
+        return this.rootNode.computeTrieWords();
+    }
+
 }
