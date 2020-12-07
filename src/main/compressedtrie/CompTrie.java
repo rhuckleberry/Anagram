@@ -59,19 +59,39 @@ public class CompTrie {
     }
 
     /**
-     * Given a word of characters, returns all substring permutations of the list that are
-     * contained in the trie
-     * @param word - string of characters
+     * Given a sequence of characters, returns all substring permutations of the list
+     * that are contained in the trie
+     * @param charSeq - string of characters
      * @return set of substring permutations contained in the trie
      */
-    public Set<String> permuteContains(String word){
+    public Set<String> permuteContains(String charSeq){
         //build charList
         List<Character> charList = new ArrayList<>();
-        for (int i=0; i<word.length();i++){
-            charList.add(word.charAt(i));
+        for (int i=0; i<charSeq.length();i++){
+            charList.add(charSeq.charAt(i));
         }
 
         //run recursive algorithm
+        return this.rootNode.permuteContains(charList);
+    }
+
+    /**
+     * Given a prefix and a sequence of characters, returns all substring permutations of
+     * the list that are contained in the trie and have the given prefix
+     * @param prefix - prefix in front of given charSeq
+     * @param charSeq - string of characters
+     * @return set of substring permutations contained in the trie
+     */
+    public Set<String> permuteContains(String prefix, String charSeq){
+        //build charList
+        List<Character> charList = new ArrayList<>();
+        for (int i=0; i<charSeq.length();i++){
+            charList.add(charSeq.charAt(i));
+        }
+
+        //traverse prefix
+
+        //run recursive algorithm on last node in prefix
         return this.rootNode.permuteContains(charList);
     }
 

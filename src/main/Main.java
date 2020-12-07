@@ -1,5 +1,7 @@
 package main;
 
+import main.Comparator.AnagramComparator;
+import main.Comparator.ScrabbleComparator;
 import main.compressedtrie.CompTrie;
 import main.langbuilder.CompTrieBuilder;
 
@@ -40,9 +42,13 @@ public class Main {
             return;
         }
 
-        String permuteString = "doxology";
+        String permuteString = "zpoo";
         Set<String> permuteContains = builtTrie.permuteContains(permuteString);
 
-        System.out.println(permuteContains);
+        //order printed list by comparator - nonincreasing order
+        List<String> orderedOutput = new ArrayList<>(permuteContains);
+        orderedOutput.sort(new ScrabbleComparator().reversed());
+
+        System.out.println(orderedOutput);
     }
 }
